@@ -93,10 +93,14 @@ public class MainActivity extends AppCompatActivity {
         searchString = txtCerca.getText().toString();
         // progress = ProgressDialog.show(this, "Sto cercando le schede tecniche", "...", true);
         Cursor cursor;
-        if (searchString.isEmpty()) {
+        if (searchString.isEmpty() && typeString.isEmpty()) {
             cursor = adapter.fetchAllTechnical();
         } else {
-            cursor = adapter.fetchTechnicalByFilter(searchString, typeString);
+            if (typeString.isEmpty()) {
+                cursor = adapter.fetchTecnicalByFilter(searchString);
+            } else {
+                cursor = adapter.fetchTechnicalByFilter(searchString, typeString);
+            }
         }
         sheetView = new SheetTableView(MainActivity.this, cursor);
         tableLayout = sheetView.makeTable();
@@ -120,27 +124,27 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.anelliRadio:
                 if (checked) {
-                    typeString = "Anelli";
+                    typeString = "Anello";
                 }
                 break;
             case R.id.braccialiRadio:
                 if (checked) {
-                    typeString = "Bracciali";
+                    typeString = "Bracciale";
                 }
                 break;
             case R.id.biglierineRadio:
                 if (checked) {
-                    typeString = "Biglierine";
+                    typeString = "Biglierina";
                 }
                 break;
             case R.id.ciondoliRadio:
                 if (checked) {
-                    typeString = "Ciondoli";
+                    typeString = "Ciondolo";
                 }
                 break;
             case R.id.collaneRadio:
                 if (checked) {
-                    typeString = "Collane";
+                    typeString = "Collana";
                 }
                 break;
             case R.id.orecchiniRadio:
@@ -150,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.orologiRadio:
                 if (checked) {
-                    typeString = "Orologi";
+                    typeString = "Orologio";
                 }
                 break;
         }

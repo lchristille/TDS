@@ -78,12 +78,18 @@ public class DbAdapter {
             return database.query(DATABASE_TABLE, new String[] { KEY_SHEETID, KEY_NAME, KEY_PATH, KEY_TYPE, KEY_LINEA}, null, null, null, null, null);
         }
 
+        public Cursor fetchTecnicalByFilter(String name) {
+            Cursor mCursor = database.query(true, DATABASE_TABLE, new String[]{
+                            KEY_SHEETID, KEY_NAME, KEY_PATH, KEY_TYPE, KEY_LINEA},
+                    KEY_NAME + " like '%" + name + "%'", null, null, null, null, null);
+            return mCursor;
+        }
+
         //fetch contacts filter by a string
         public Cursor fetchTechnicalByFilter(String name, String type) {
-            Cursor mCursor = database.query(true, DATABASE_TABLE, new String[] {
-                            KEY_SHEETID, KEY_NAME, KEY_PATH, KEY_TYPE, KEY_LINEA },
-                    KEY_NAME + " like '%" + name + "%' & " + KEY_TYPE + " like '%" + type + "%'", null, null, null, null, null);
-
+                Cursor mCursor = database.query(true, DATABASE_TABLE, new String[]{
+                                KEY_SHEETID, KEY_NAME, KEY_PATH, KEY_TYPE, KEY_LINEA},
+                        KEY_NAME + " like '%" + name + "%' AND " + KEY_TYPE + " like '%" + type + "%'", null, null, null, null, null);
             return mCursor;
         }
 
