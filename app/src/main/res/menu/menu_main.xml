@@ -3,9 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="it.oltrenuovefrontiere.tds.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/aggiornaDB"
+        android:onClick="aggiornaDB"
         android:orderInCategory="100"
         android:title="Aggiorna DB"
-        android:onClick="aggiornaDB"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/aggiornaLinee"
+        android:onClick="lineaSelect"
+        android:orderInCategory="110"
+        android:title="Aggiorna Linee"
         app:showAsAction="never" />
 </menu>

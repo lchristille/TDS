@@ -3,13 +3,11 @@ package it.oltrenuovefrontiere.tds;
 import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
@@ -17,6 +15,7 @@ import android.widget.TableLayout;
 
 import com.facebook.stetho.Stetho;
 
+import java.util.ArrayList;
 
 import it.oltrenuovefrontiere.tds.model.DbAdapter;
 import it.oltrenuovefrontiere.tds.view.SheetTableView;
@@ -82,7 +81,10 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.aggiornaDB) {
+            return true;
+        }
+        if (id == R.id.aggiornaLinee) {
             return true;
         }
 
@@ -162,5 +164,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void aggiornaDB(MenuItem item) {
         adapter.aggiornaDB();
+    }
+
+    public void lineaSelect(MenuItem item) {
+        ArrayList<String> lineeList = adapter.fetchDistinctLinea();
+        EditText lineeTxt = (EditText) findViewById(R.id.lineeTxt);
+        StringBuilder string = new StringBuilder();
+        for (String s : lineeList) {
+            string.append(" " + s + " ");
+        }
+        lineeTxt.setText(string.toString());
     }
 }

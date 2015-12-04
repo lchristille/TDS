@@ -11,26 +11,24 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
-import it.oltrenuovefrontiere.tds.MainActivity;
+import java.util.ArrayList;
+
 import it.oltrenuovefrontiere.tds.filer.FileEnumerator;
 import it.oltrenuovefrontiere.tds.helper.DatabaseHelper;
 
 public class DbAdapter {
-        @SuppressWarnings("unused")
-        private static final String LOG_TAG = DbAdapter.class.getSimpleName();
-
-        private Context context;
-        private SQLiteDatabase database;
-        private DatabaseHelper dbHelper;
-
-        // Database fields
-        private static final String DATABASE_TABLE = "technical";
-
         public static final String KEY_SHEETID = "rowid";
         public static final String KEY_NAME = "name";
         public static final String KEY_PATH = "path";
         public static final String KEY_TYPE = "type";
         public static final String KEY_LINEA = "linea";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = DbAdapter.class.getSimpleName();
+    // Database fields
+    private static final String DATABASE_TABLE = "technical";
+    private Context context;
+    private SQLiteDatabase database;
+    private DatabaseHelper dbHelper;
 
         public DbAdapter(Context context) {
             this.context = context;
@@ -110,5 +108,17 @@ public class DbAdapter {
         resetDB();
         FileEnumerator.listToDB(this);
         Toast.makeText(context, "Ho aggiornato il database", Toast.LENGTH_LONG).show();
+    }
+
+    public ArrayList<String> fetchDistinctLinea() {
+        Cursor mCursor = database.rawQuery("SELECT DISTINCT linea FROM technical", null);
+        ArrayList<String> lineeList = new ArrayList<String>();
+        if (!mCursor.isNull(0)) {
+            mCursor.moveToFirst();
+            do {
+                lineeList.add(mCursor.getString(0));
+            } while (!mCursor.isLast());
+        }
+        return lineeList;
     }
 }

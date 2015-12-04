@@ -39,85 +39,91 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Cerca scheda per nome:"
-                    android:textColor="#E1DA47"/>
+                    android:textColor="@color/colorPrimaryText" />
                 <EditText
                     android:id="@+id/txtCerca"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="#E1DA47" />
+                    android:textColor="@color/colorPrimaryText" />
                 <Button
                     android:id="@+id/btnCerca"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cerca"
-                    android:onClick="search" />
+                    android:onClick="search"
+                    android:text="Cerca" />
 
                 <RadioGroup
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
                     <RadioButton android:id="@+id/tuttiRadio"
-                        android:text="Tutti"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#E1DA47"
-                        android:onClick="radioSelection"
                         android:checked="true"
-                        android:enabled="true" />
+                        android:enabled="true"
+                        android:onClick="radioSelection"
+                        android:text="Tutti"
+                        android:textColor="@color/colorPrimaryText" />
                     <RadioButton android:id="@+id/anelliRadio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="radioSelection"
                         android:text="Anelli"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#E1DA47"
-                        android:onClick="radioSelection" />
+                        android:textColor="@color/colorPrimaryText" />
                     <RadioButton android:id="@+id/braccialiRadio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="radioSelection"
                         android:text="Bracciali"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#E1DA47"
-                        android:onClick="radioSelection" />
+                        android:textColor="@color/colorPrimaryText" />
                     <RadioButton android:id="@+id/biglierineRadio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="radioSelection"
                         android:text="Biglierine"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#E1DA47"
-                        android:onClick="radioSelection" />
+                        android:textColor="@color/colorPrimaryText" />
                     <RadioButton android:id="@+id/ciondoliRadio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="radioSelection"
                         android:text="Ciondoli"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#E1DA47"
-                        android:onClick="radioSelection" />
+                        android:textColor="@color/colorPrimaryText" />
                     <RadioButton android:id="@+id/collaneRadio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="radioSelection"
                         android:text="Collane"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#E1DA47"
-                        android:onClick="radioSelection" />
+                        android:textColor="@color/colorPrimaryText" />
                     <RadioButton android:id="@+id/orecchiniRadio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="radioSelection"
                         android:text="Orecchini"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#E1DA47"
-                        android:onClick="radioSelection" />
+                        android:textColor="@color/colorPrimaryText" />
                     <RadioButton android:id="@+id/orologiRadio"
-                        android:text="Orologi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#E1DA47"
-                        android:onClick="radioSelection" />
+                        android:onClick="radioSelection"
+                        android:text="Orologi"
+                        android:textColor="@color/colorPrimaryText" />
 
                 </RadioGroup>
-                
+
+                <EditText
+                    android:id="@+id/lineeTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Seleziona una linea"
+                    android:textColor="@color/colorPrimaryText" />
             </LinearLayout>
 
         </RelativeLayout>
 
         <ScrollView
-            android:layout_column="1"
-            android:layout_row="0"
+            android:id="@+id/tecnicalScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tecnicalScrollView"
+            android:layout_column="1"
+            android:layout_row="0"
             android:fillViewport="false">
         </ScrollView>
     </GridLayout>
