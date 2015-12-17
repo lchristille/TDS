@@ -24,7 +24,10 @@
             android:layout_width="280dp"
             android:layout_height="match_parent"
             android:layout_column="0"
-            android:layout_row="0">
+            android:layout_row="0"
+            android:descendantFocusability="beforeDescendants"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
 
             <SurfaceView
                 android:layout_width="match_parent"
@@ -44,6 +47,7 @@
                     android:id="@+id/txtCerca"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="textNoSuggestions"
                     android:textColor="@color/colorPrimaryText" />
                 <Button
                     android:id="@+id/btnCerca"
@@ -108,12 +112,12 @@
 
                 </RadioGroup>
 
-                <EditText
-                    android:id="@+id/lineeTxt"
+                <Button
+                    android:id="@+id/lineeBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Seleziona una linea"
-                    android:textColor="@color/colorPrimaryText" />
+                    android:onClick="onLineaChoose"
+                    android:text="@string/allLines" />
             </LinearLayout>
 
         </RelativeLayout>

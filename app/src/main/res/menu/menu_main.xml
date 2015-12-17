@@ -9,9 +9,8 @@
         android:title="Aggiorna DB"
         app:showAsAction="never" />
     <item
-        android:id="@+id/aggiornaLinee"
-        android:onClick="lineaSelect"
+        android:id="@+id/esportaDB"
         android:orderInCategory="110"
-        android:title="Aggiorna Linee"
+        android:title="EsportaDB"
         app:showAsAction="never" />
 </menu>

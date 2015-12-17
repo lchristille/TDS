@@ -1,35 +1,50 @@
 package it.oltrenuovefrontiere.tds;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
+import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import it.oltrenuovefrontiere.tds.model.DbAdapter;
+import it.oltrenuovefrontiere.tds.model.TechnicalQueryBuilder;
 import it.oltrenuovefrontiere.tds.view.SheetTableView;
 
 public class MainActivity extends AppCompatActivity {
 
-    DbAdapter adapter;
-    ScrollView technicalScrollView;
-    SheetTableView sheetView;
-    EditText txtCerca;
-    String searchString = "";
-    String typeString = "";
-    ProgressDialog progress;
-    TableLayout tableLayout;
+    private DbAdapter adapter;
+    private ScrollView technicalScrollView;
+    private SheetTableView sheetView;
+    private EditText txtCerca;
+    private String searchString = "";
+    private String typeString = "";
+    private TableLayout tableLayout;
+    private Button btnLinea;
+    private AlertDialog.Builder builder;
+    private String lineaString = "";
+    private ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,19 +53,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        btnLinea = (Button) findViewById(R.id.lineeBtn);
+        builder = new AlertDialog.Builder(MainActivity.this);
 
         txtCerca = (EditText) findViewById(R.id.txtCerca);
-
-
-        /* adapter = new DbAdapter(this);
-        adapter.open();
-
-        Cursor cursor = adapter.fetchAllTechnical();
-
-        technicalScrollView = (ScrollView) findViewById(R.id.tecnicalScrollView);
-        sheetView = new SheetTableView(this , cursor);
-        technicalScrollView.addView(sheetView.makeTable());
-        */
     }
 
     @Override
@@ -82,36 +88,77 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.aggiornaDB) {
+            aggiornaDB(item);
             return true;
         }
-        if (id == R.id.aggiornaLinee) {
+        if (id == R.id.esportaDB) {
+            exportDB(item);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    public void exportDB(MenuItem item) {
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+            File data = Environment.getDataDirectory();
+
+            if (sd.canWrite()) {
+                String currentDBPath = "/data/it.oltrenuovefrontiere.tds/databases/datasheets.db";
+                String backupDBPath = "datasheets.db";
+                File currentDB = new File(data, currentDBPath);
+                File backupDB = new File(sd, backupDBPath);
+
+                if (currentDB.exists()) {
+                    FileChannel src = new FileInputStream(currentDB).getChannel();
+                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                    Toast.makeText(this, "DB Esportato", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+
     public void search(View v) {
         searchString = txtCerca.getText().toString();
-        // progress = ProgressDialog.show(this, "Sto cercando le schede tecniche", "...", true);
-        Cursor cursor;
-        if (searchString.isEmpty() && typeString.isEmpty()) {
-            cursor = adapter.fetchAllTechnical();
-        } else {
-            if (typeString.isEmpty()) {
-                cursor = adapter.fetchTecnicalByFilter(searchString);
-            } else {
-                cursor = adapter.fetchTechnicalByFilter(searchString, typeString);
-            }
-        }
-        sheetView = new SheetTableView(MainActivity.this, cursor);
-        tableLayout = sheetView.makeTable();
-        technicalScrollView = (ScrollView) findViewById(R.id.tecnicalScrollView);
-        technicalScrollView.removeAllViews();
-        technicalScrollView.addView(tableLayout);
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
-        // Toast toast = Toast.makeText(MainActivity.this, "Ho cercato tutte le schede tecniche contenenti " + searchString, Toast.LENGTH_LONG);
-        // toast.show();
+            @Override
+            protected void onPreExecute() {
+                pd = new ProgressDialog(MainActivity.this);
+                pd.setTitle("Elaborazione in corso...");
+                pd.setMessage("Attendere prego");
+                pd.setCancelable(false);
+                pd.setIndeterminate(true);
+                pd.show();
+            }
+
+            @Override
+            protected Void doInBackground(Void... arg0) {
+                Cursor cursor;
+                cursor = adapter.fetchTechnicalWithBuilder(new TechnicalQueryBuilder(searchString, typeString, lineaString));
+                sheetView = new SheetTableView(MainActivity.this, cursor);
+                tableLayout = sheetView.makeTable();
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                technicalScrollView = (ScrollView) findViewById(R.id.tecnicalScrollView);
+                technicalScrollView.removeAllViews();
+                technicalScrollView.addView(tableLayout);
+                if (pd != null) {
+                    pd.dismiss();
+                }
+            }
+
+        };
+
+        task.execute((Void[]) null);
     }
 
     public void radioSelection(View v) {
@@ -166,13 +213,57 @@ public class MainActivity extends AppCompatActivity {
         adapter.aggiornaDB();
     }
 
-    public void lineaSelect(MenuItem item) {
-        ArrayList<String> lineeList = adapter.fetchDistinctLinea();
-        EditText lineeTxt = (EditText) findViewById(R.id.lineeTxt);
-        StringBuilder string = new StringBuilder();
-        for (String s : lineeList) {
-            string.append(" " + s + " ");
-        }
-        lineeTxt.setText(string.toString());
+    public Dialog onCreateDialog(View v) {
+        v.setEnabled(false);
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            ArrayList<String> lineeList = new ArrayList<>();
+
+            @Override
+            protected void onPreExecute() {
+                pd = new ProgressDialog(MainActivity.this);
+                pd.setTitle("Elaborazione in corso...");
+                pd.setMessage("Attendere prego");
+                pd.setCancelable(false);
+                pd.setIndeterminate(true);
+                pd.show();
+
+            }
+
+            @Override
+            protected Void doInBackground(Void... arg0) {
+                lineeList = adapter.fetchDistinctLinea();
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                final CharSequence[] items = lineeList.toArray(new CharSequence[lineeList.size()]);
+                builder.setTitle("Seleziona una Linea estetica")
+                        .setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String toBeSetted = new String(items[which].toString());
+                                if (toBeSetted.contentEquals("Tutte le linee")) {
+                                    lineaString = "";
+                                    btnLinea.setText("Tutte le linee");
+                                } else {
+                                    lineaString = toBeSetted;
+                                    btnLinea.setText(lineaString);
+                                }
+                            }
+                        });
+                if (pd != null) {
+                    pd.dismiss();
+                    btnLinea.setEnabled(true);
+                }
+            }
+
+        };
+        task.execute((Void[]) null);
+        return builder.create();
+    }
+
+    public void onLineaChoose(View v) {
+        onCreateDialog(v).show();
     }
 }

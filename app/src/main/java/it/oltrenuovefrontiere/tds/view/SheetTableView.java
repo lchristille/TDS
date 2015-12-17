@@ -1,6 +1,5 @@
 package it.oltrenuovefrontiere.tds.view;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -17,24 +16,22 @@ import android.widget.TextView;
 import java.io.File;
 
 import it.oltrenuovefrontiere.tds.MainActivity;
-import it.oltrenuovefrontiere.tds.filer.FileEnumerator;
 import it.oltrenuovefrontiere.tds.model.DbAdapter;
 
 /**
  * Created by Utente on 03/12/2015.
  */
 public class SheetTableView {
-    Context ct;
-    DbAdapter adapter;
-    Cursor cursor;
-    TableLayout technicalList;
+    private Context ct;
+    private DbAdapter adapter;
+    private Cursor cursor;
+    private TableLayout technicalList;
 
     public SheetTableView(MainActivity mainActivity, Cursor cursor) {
-        Context newct = mainActivity;
-        SheetTableView(newct, cursor);
+        this((Context) mainActivity, cursor);
     }
 
-    public void SheetTableView(Context _ct, Cursor _cursor) {
+    public SheetTableView(Context _ct, Cursor _cursor) {
         this.ct = _ct;
         adapter = new DbAdapter(this.ct);
         this.cursor = _cursor;
@@ -45,9 +42,9 @@ public class SheetTableView {
         technicalList = new TableLayout(ct);
         adapter.open();
 
-        if (cursor.getCount() > 1) {
+        if (cursor.getCount() > 0) {
             cursor.moveToFirst();
-            do {
+            for (int i = 1; i <= cursor.getCount(); i++) {
                 TableRow row = new TableRow(ct);
                 final Button t = new Button(ct);
                 t.setOnClickListener(new View.OnClickListener() {
@@ -77,7 +74,7 @@ public class SheetTableView {
                     int originalHeight = image.getHeight();
                     int newWidth = -1;
                     int newHeight = -1;
-                    float multFactor = -1.0F;
+                    float multFactor;
                     if (originalHeight > originalWidth) {
                         newHeight = 150;
                         multFactor = (float) originalWidth / (float) originalHeight;
@@ -99,12 +96,11 @@ public class SheetTableView {
                 row.addView(txt);
                 technicalList.addView(row, new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
                 cursor.moveToNext();
-            } while (!cursor.isLast());
+            }
         }
         cursor.close();
 
         adapter.close();
-        //progress.dismiss();
         return technicalList;
     }
 }

@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">TDS</string>
     <string name="action_settings">Settings</string>
+    <string name="allLines">Tutte le linee</string>
 </resources>

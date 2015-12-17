@@ -3,9 +3,7 @@ package it.oltrenuovefrontiere.tds.filer;
 import android.os.Environment;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 import it.oltrenuovefrontiere.tds.model.DbAdapter;
@@ -17,18 +15,14 @@ public class FileEnumerator {
     private String list;
     private String path;
 
-    protected void FileEnumerator() {
-
-    }
-
     public static void listToDB(DbAdapter adapter) {
         String type[] = { "Anello", "Biglierina", "Bracciale", "Ciondolo", "Collana", "Orecchini", "Orologio" };
         String initial_path = Environment.getExternalStorageDirectory().toString() + "/Documents/Schede Tecniche Bulgari/";
         for (String t : type) {
             String path = initial_path + t;
 
-            List<File> allFiles = new ArrayList<File>();
-            Queue<File> dirs = new LinkedList<File>();
+            // List<File> allFiles = new ArrayList<>();
+            Queue<File> dirs = new LinkedList<>();
             dirs.add(new File(path));
             while (!dirs.isEmpty()) {
                 for (File f : dirs.poll().listFiles()) {
@@ -36,9 +30,9 @@ public class FileEnumerator {
                         dirs.add(f);
                     } else if (f.isFile()) {
                         if (f.getName().endsWith("pdf")) {
-                            String parent = f.getParent().toString();
+                            String parent = f.getParent();
                             String linea = parent.substring(parent.lastIndexOf("/") + 1, parent.length());
-                            adapter.createTechnical(f.getName().toString(), f.getAbsolutePath().toString(), t, linea);
+                            adapter.createTechnical(f.getName(), f.getAbsolutePath(), t, linea);
                         }
                     }
                 }
